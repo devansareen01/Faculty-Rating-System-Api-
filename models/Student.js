@@ -25,18 +25,24 @@ const StudentSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        require: true,
+        required: true,
         min: 4
     },
+    incharge_id: {
+        type: Number,
+        required: true
+    },
+
     token: {
         type: String,
 
-    }
+    },
+
 })
 StudentSchema.methods.generateAuthToken = async function () {
     try {
 
-        let token = await jwt.sign({ _id: this._id }, process.env.SECRET_KEY);
+        let token = await jwt.sign({ _id: this._id, name: this.name }, process.env.SECRET_KEY);
         this.token = token
         await this.save();
         return token;

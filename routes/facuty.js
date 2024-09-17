@@ -74,7 +74,8 @@ router.post('/login', async (req, res) => {
             console.log(token)
             return res.status(200).json({
                 message: 'Login Sucessfull',
-                token: token
+                token: token,
+                name: faculty.name
             });
         } else {
             return res.status(404).json({ message: "wrong password" })
@@ -106,13 +107,18 @@ router.post('/student-register', authorization, async (req, res) => {
             name: req.body.name,
             branch: req.body.branch,
             semester: req.body.semester,
-            password: req.body.password
+            password: req.body.password,
+            incharge_id: req.body.incharge_id
+
         })
 
 
         const token = await newStudent.generateAuthToken();
         await newStudent.save();
-        return res.status(200).json(newStudent);
+        return res.status(200).json({
+            message: "Student registered successfully",
+            newStudent: newStudent
+        });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -138,7 +144,9 @@ router.post('/import-students', authorization, upload.single('file'), async (req
                 email: row[2],
                 branch: row[3],
                 semester: row[4],
-                password: row[5]
+                password: row[5],
+                incharge_id: row[6]
+
             };
         });
 
@@ -165,7 +173,7 @@ router.post('/getStudents', authorization, async (req, res) => {
         if (!faculty) {
             return res.status(204).json({ message: "Faculty not registered" });
         } else {
-            const allStudent = await Student.find({ branch: faculty.branch })
+            const allStudent = await Student.find({ incharge_id: faculty.facultyId })
             return res.status(200).json(allStudent);
 
         }
@@ -203,4 +211,42 @@ router.post('/changePassword', authorization, async (req, res) => {
     }
 });
 
+router.delete('/delete_student', authorization, async (req, res) => {
+    try {
+
+        const { studentId } = req.body;
+        await Student.deleteOne({ studentId: studentId }); // Correct syntax for deleteOne
+        return res.status(200).json({ message: 'Student deleted successfully.' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error deleting Student' });
+    }
+});
+
+router.put('/update_student', authorization, async (req, res) => {
+    try {
+        const { studentId, name, email, branch, semester } = req.body;
+        const updatedFields = {};
+
+        if (name) updatedFields.name = name;
+        if (email) updatedFields.email = email;
+        if (branch) updatedFields.branch = branch;
+        if (semester) updatedFields.semester = semester;
+
+        const updatedStudent = await Student.findOneAndUpdate(
+            { studentId: studentId }, // Find student by ID
+            { $set: updatedFields },  // Update the fields dynamically
+            { new: true }             // Return the updated document
+        );
+
+        if (!updatedStudent) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        return res.status(200).json({ message: 'Student updated successfully', updatedStudent });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error updating student' });
+    }
+});
 module.exports = router;

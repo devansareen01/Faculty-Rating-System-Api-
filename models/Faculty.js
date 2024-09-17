@@ -19,18 +19,10 @@ const FacultySchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    semester: {
-        type: String,
-        required: true
-    },
     password: {
         type: String,
         required: true,
         minlength: 4
-    },
-    branch: {
-        type: String,
-        required: true,
     },
     allCourses: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -38,20 +30,25 @@ const FacultySchema = new mongoose.Schema({
     }],
     token: {
         type: String,
-        required: true
+
     }
 });
 
 FacultySchema.methods.generateAuthToken = async function () {
     try {
+        // Create the token payload including the faculty's _id and name
+        let token = jwt.sign(
+            { _id: this._id, name: this.name }, // adding the faculty name to the token payload
+            process.env.SECRET_KEY
+        );
 
-        let token = jwt.sign({ _id: this._id }, process.env.SECRET_KEY);
-        this.token = token
-        console.log(token);
-        await this.save();
+        this.token = token;
+        await this.save();  // save the token to the database
+
         return token;
     } catch (error) {
         return error;
     }
 };
+
 module.exports = mongoose.model("Faculty", FacultySchema);

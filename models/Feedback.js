@@ -13,12 +13,8 @@ const feedbackSchema = new mongoose.Schema({
         question7: { type: Number, required: true, max: 5 },
         question8: { type: Number, required: true, max: 5 },
         question9: { type: Number, required: true, max: 5 },
-        question10: { type: Number, required: true, max: 5 },
-        question11: { type: Number, required: true, max: 5 },
-        question12: { type: Number, required: true, max: 5 },
-        question13: { type: Number, required: true, max: 5 },
-        question14: { type: Number, required: true, max: 5 },
-        question15: { type: Number, required: true, max: 5 }
+        question10: { type: Number, max: 5 },
+
 
 
     },
