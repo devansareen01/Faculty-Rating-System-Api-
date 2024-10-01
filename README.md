@@ -58,7 +58,7 @@ npm start
 ```
 ## Deployment
 
-The Feedback Portal is deployed on Render. You can access it [here](https://frs-backend.onrender.com).
+The Feedback Portal is deployed on Render. https://frs-backend.onrender.com
 
 ### Environment Variables
 
