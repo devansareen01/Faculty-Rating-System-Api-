@@ -56,6 +56,14 @@ Start the server:
 ```bash
 npm start
 ```
+## Deployment
+
+The Feedback Portal is deployed on Render. You can access it [here](https://frs-backend.onrender.com).
+
+### Environment Variables
+
+- `MONGO_URI`: Your MongoDB connection string for database access.
+- `SECRET_KEY`: Your JWT secret key for token signing.
 
 ## API Endpoints
 
